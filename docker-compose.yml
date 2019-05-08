@@ -1,0 +1,31 @@
+version: '3'
+services:
+  data.preparation:
+    build:
+      context: ./data_preparetion
+      dockerfile: Dockerfile
+      args:
+        ENV_CODPAIS: CL
+        ENV_ANIOCAMPANA: 201901
+
+  train.model:
+    build:
+      context: ./train_model
+      dockerfile: Dockerfile
+      args:
+        ENV_CODPAIS: CL
+        ENV_ANIOCAMPANA: 201901
+    depends_on:
+      - data.preparation
+
+  predict:
+    build:
+      context: ./predict_model
+      dockerfile: Dockerfile
+      args:
+        ENV_CODPAIS: CL
+        ENV_ANIOCAMPANA: 201901
+    depends_on:
+      - train.model
+      - data.preparation
+
