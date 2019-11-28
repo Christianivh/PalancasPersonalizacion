@@ -6,7 +6,10 @@ from io import BytesIO
 
 class S3Manager:
     def __init__(self):
-        self.s3 = boto3.client('s3')
+        try:
+            self.s3 = boto3.client('s3')
+        except Exception as e:
+            print('Error while instantiating s3 manager: {}'.format(e.message))
 
     def download_file(self, bucket, key_object, local_filename, decompress=False):
         """
@@ -49,7 +52,6 @@ class S3Manager:
         :return:
         """
         try:
-
             with open(local_filename, 'rb') as data:
                 if compress:
                     data = gzip.GzipFile(fileobj=data, mode='rb')
