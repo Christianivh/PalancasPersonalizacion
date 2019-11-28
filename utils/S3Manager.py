@@ -59,7 +59,7 @@ class S3Manager:
                     with gzip.GzipFile(fileobj=compresed_io, mode='wb') as out_gzp:
                         shutil.copyfileobj(data, out_gzp)
                     key_object = key_object + '.gz'
-
+                    data = out_gzp
                 self.s3.upload_fileobj(data, bucket, key_object)
 
         except botocore.exceptions.ClientError as e:
