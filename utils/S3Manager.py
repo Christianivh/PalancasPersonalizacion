@@ -55,8 +55,9 @@ class S3Manager:
         try:
             with open(local_filename, 'rb') as data:
                 if compress:
-                    output = gzip.GzipFile(fileobj=BytesIO(), mode='wb')
-                    output.write(data)
+                    compresed_io = BytesIO()
+                    with gzip.GzipFile(fileobj=compresed_io, mode='wb') as out_gzp:
+                        shutil.copyfileobj(data, out_gzp)
                     key_object = key_object + '.gz'
 
                 self.s3.upload_fileobj(data, bucket, key_object)
