@@ -1,6 +1,7 @@
 import boto3
 import botocore
 import gzip
+import shutil
 from io import BytesIO
 
 
@@ -54,10 +55,11 @@ class S3Manager:
         try:
             with open(local_filename, 'rb') as data:
                 if compress:
-                    data = gzip.GzipFile(fileobj=data, mode='rb')
+                    output = gzip.GzipFile(fileobj=BytesIO(), mode='wb')
+                    output.write(data)
                     key_object = key_object + '.gz'
 
-            self.s3.upload_fileobj(data, bucket, key_object)
+                self.s3.upload_fileobj(data, bucket, key_object)
 
         except botocore.exceptions.ClientError as e:
             if e.response['Error']['Code'] == "404":
