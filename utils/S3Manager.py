@@ -57,7 +57,7 @@ class S3Manager:
                     data = gzip.GzipFile(fileobj=data, mode='rb')
                     key_object = key_object + '.gz'
 
-                self.s3.upload_fileobj(data, bucket, key_object)
+            self.s3.upload_fileobj(data, bucket, key_object)
 
         except botocore.exceptions.ClientError as e:
             if e.response['Error']['Code'] == "404":
