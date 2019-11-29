@@ -6,9 +6,12 @@ from io import BytesIO
 
 
 class S3Manager:
-    def __init__(self):
+    def __init__(self, access_key_id = None, secret_access_key = None):
         try:
-            self.s3 = boto3.client('s3')
+            if not access_key_id:
+                self.s3 = boto3.client('s3')
+            else:
+                self.s3 = boto3.client('s3', access_key_id, secret_access_key)
         except Exception as e:
             print('Error while instantiating s3 manager: {}'.format(e.message))
 
@@ -55,12 +58,12 @@ class S3Manager:
         try:
             with open(local_filename, 'rb') as data:
                 if compress:
-                    compresed_io = BytesIO()
-                    with gzip.GzipFile(fileobj=compresed_io, mode='wb') as out_gzp:
+                    compressed_io = BytesIO()
+                    with gzip.GzipFile(fileobj=compressed_io, mode='wb') as out_gzp:
                         shutil.copyfileobj(data, out_gzp)
                     key_object = key_object + '.gz'
-                    compresed_io.seek(0)
-                    data = compresed_io
+                    compressed_io.seek(0)
+                    data = compressed_io
                 self.s3.upload_fileobj(data, bucket, key_object)
 
         except botocore.exceptions.ClientError as e:
